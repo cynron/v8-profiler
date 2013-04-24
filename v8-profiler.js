@@ -33,9 +33,6 @@ Snapshot.prototype.children = function(node) {
   for(i = 0; i < node.childrenCount; i++) {
     children[i] = node.getChild(i);
   }
-  children.sort(function (a, b){
-    return b.to.retainedSize() - a.to.retainedSize();
-  });
   return children;
 }
 
