@@ -17,8 +17,6 @@ class Snapshot {
     Snapshot(const v8::HeapSnapshot* snapshot)
         : m_snapshot(snapshot){}
 
-    const v8::HeapSnapshot* m_snapshot;
-
     static Handle<Value> GetUid(Local<String> property, const AccessorInfo& info);
     static Handle<Value> GetTitle(Local<String> property, const AccessorInfo& info);
     static Handle<Value> GetRoot(Local<String> property, const AccessorInfo& info);
