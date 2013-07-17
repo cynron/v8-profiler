@@ -1,5 +1,4 @@
 #include "snapshot.h"
-#include "graph_node.h"
 #include "node.h"
 #include "node_buffer.h"
 
@@ -15,21 +14,9 @@ void Snapshot::Initialize() {
   snapshot_template_->SetInternalFieldCount(1);
   snapshot_template_->SetAccessor(String::New("title"), Snapshot::GetTitle);
   snapshot_template_->SetAccessor(String::New("uid"), Snapshot::GetUid);
-  snapshot_template_->SetAccessor(String::New("root"), Snapshot::GetRoot);
   snapshot_template_->SetAccessor(String::New("type"), Snapshot::GetType);
-  snapshot_template_->SetAccessor(String::New("nodesCount"), Snapshot::GetNodesCount);
-  snapshot_template_->Set(String::New("getNodeById"), FunctionTemplate::New(Snapshot::GetNodeById));
-  snapshot_template_->Set(String::New("getNode"), FunctionTemplate::New(Snapshot::GetNode));
   snapshot_template_->Set(String::New("delete"), FunctionTemplate::New(Snapshot::Delete));
   snapshot_template_->Set(String::New("serialize"), FunctionTemplate::New(Snapshot::Serialize));
-}
-
-Handle<Value> Snapshot::GetUid(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  Local<Object> self = info.Holder();
-  void* ptr = self->GetPointerFromInternalField(0);
-  uint32_t uid = static_cast<HeapSnapshot*>(ptr)->GetUid();
-  return scope.Close(Integer::NewFromUnsigned(uid));
 }
 
 
@@ -41,12 +28,12 @@ Handle<Value> Snapshot::GetTitle(Local<String> property, const AccessorInfo& inf
   return scope.Close(title);
 }
 
-Handle<Value> Snapshot::GetRoot(Local<String> property, const AccessorInfo& info) {
+Handle<Value> Snapshot::GetUid(Local<String> property, const AccessorInfo& info) {
   HandleScope scope;
   Local<Object> self = info.Holder();
   void* ptr = self->GetPointerFromInternalField(0);
-  const HeapGraphNode* node = static_cast<HeapSnapshot*>(ptr)->GetRoot();
-  return scope.Close(GraphNode::New(node));
+  uint32_t uid = static_cast<HeapSnapshot*>(ptr)->GetUid();
+  return scope.Close(Integer::NewFromUnsigned(uid));
 }
 
 Handle<Value> Snapshot::GetType(Local<String> property, const AccessorInfo& info) {
@@ -66,43 +53,6 @@ Handle<Value> Snapshot::GetType(Local<String> property, const AccessorInfo& info
   }
 
   return scope.Close(t);
-}
-
-Handle<Value> Snapshot::GetNodesCount(Local<String> property, const AccessorInfo& info) {
-  HandleScope scope;
-  Local<Object> self = info.Holder();
-  void* ptr = self->GetPointerFromInternalField(0);
-  Local<Integer> count = Integer::New(static_cast<HeapSnapshot*>(ptr)->GetNodesCount());
-
-  return scope.Close(count);
-}
-
-Handle<Value> Snapshot::GetNodeById(const Arguments& args) {
-  HandleScope scope;
-  if (args.Length() < 1) {
-    return ThrowException(Exception::Error(String::New("No index specified")));
-  } else if (!args[0]->IsUint32()) {
-    return ThrowException(Exception::Error(String::New("Argument must be integer")));
-  }
-  uint64_t id = static_cast<uint64_t>(args[0]->Uint32Value());
-  Handle<Object> self = args.This();
-  void* ptr = self->GetPointerFromInternalField(0);
-  const HeapGraphNode* node = static_cast<HeapSnapshot*>(ptr)->GetNodeById(id);
-  return scope.Close(GraphNode::New(node));
-}
-
-Handle<Value> Snapshot::GetNode(const Arguments& args) {
-  HandleScope scope;
-  if (args.Length() < 1) {
-    return ThrowException(Exception::Error(String::New("No index specified")));
-  } else if (!args[0]->IsInt32()) {
-    return ThrowException(Exception::Error(String::New("Argument must be integer")));
-  }
-  int32_t index = args[0]->Int32Value();
-  Handle<Object> self = args.This();
-  void* ptr = self->GetPointerFromInternalField(0);
-  const HeapGraphNode* node = static_cast<HeapSnapshot*>(ptr)->GetNode(index);
-  return scope.Close(GraphNode::New(node));
 }
 
 Handle<Value> Snapshot::Delete(const Arguments& args) {
