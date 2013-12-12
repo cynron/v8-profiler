@@ -1,10 +1,12 @@
 {
-    "name": "v8-profiler",
-    "version": "3.6.2-1",
-    "description": "node bindings for the v8 profiler",
-    "homepage": "http://github.com/dannycoates/v8-profiler",
-    "author": "Danny Coates <dannycoates@gmail.com>",
-    "keywords": ["profiler", "inspector"],
-    "engines" : { "node": ">=0.6" },
-    "main" : "v8-profiler"
+  "name": "nodefly-v8-profiler",
+  "version": "3.7.1",
+  "description": "node bindings for the v8 profiler, minus the retain/dominator bits removed from V8",
+  "homepage": "http://github.com/nodefly/nodefly-v8-profiler",
+  "keywords": ["profiler", "inspector"],
+  "engines" : { "node": ">=0.6" },
+  "main" : "index",
+  "scripts": { 
+    "install" : "(node-gyp rebuild 2> builderror.log) || (exit 0)"
+  }
 }
